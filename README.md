@@ -5,7 +5,7 @@ A full-stack food store calculator with discount logic, built with NestJS and Ne
 ## Tech Stack
 
 - **Backend:** NestJS + TypeScript
-- **Frontend:** Next.js 14 (App Router) + React + TypeScript + Tailwind CSS v4
+- **Frontend:** Next.js 14 (App Router) TypeScript + Tailwind CSS v4
 - **Testing:** Jest + React Testing Library
 - **API Docs:** Swagger UI
 
