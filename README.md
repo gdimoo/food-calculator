@@ -1,30 +1,36 @@
 # Food Store Calculator
 
-A full-stack calculator app for a food store with discount logic.
+A full-stack food store calculator with discount logic, built with NestJS and Next.js.
 
 ## Tech Stack
 
 - **Backend:** NestJS + TypeScript
-- **Frontend:** Next.js + React + TypeScript
-- **Testing:** Jest + React Testing Library (TDD)
+- **Frontend:** Next.js 14 (App Router) + React + TypeScript + Tailwind CSS v4
+- **Testing:** Jest + React Testing Library
+- **API Docs:** Swagger UI
 
 ## Project Structure
 
 ```
 food-calculator/
-├── backend/          # NestJS API
+├── backend/
 │   └── src/
-│       ├── products/     # GET /api/products
-│       ├── calculator/   # POST /api/calculate
-│       └── red-set/      # Red Set restriction logic
-└── frontend/         # Next.js UI
+│       ├── calculator/       # POST /api/calculate
+│       ├── products/         # GET /api/products
+│       └── red-set/          # Red Set hourly restriction logic
+└── frontend/
     └── src/
+        ├── app/
+        │   ├── page.tsx          # Order page
+        │   ├── result/page.tsx   # Result page
+        │   └── api/              # Next.js proxy routes → backend
         ├── components/
-        │   ├── ProductList/
-        │   ├── MemberCard/
-        │   └── Summary/
-        └── hooks/
-            └── useCalculator/
+        │   ├── ProductList/      # Product list with +/− quantity
+        │   ├── MemberCard/       # Member card input
+        │   └── Summary/          # Order summary with discounts
+        ├── hooks/
+        │   └── useCalculator/    # State + API call logic
+        └── types/                # Shared TypeScript interfaces
 ```
 
 ## Getting Started
@@ -47,9 +53,23 @@ npm run dev           # http://localhost:3000
 npm run test          # run unit tests
 ```
 
+### Swagger Docs
+
+```
+http://localhost:3001/api/docs
+```
+
+## UI Flow
+
+1. **Order page** — select product quantities, enter optional member card number, click Calculate
+2. **Result page** — shows full order summary with discounts breakdown
+3. Calculate button is disabled when no items are selected
+4. All prices displayed with 2 decimal places
+
 ## API Endpoints
 
 ### GET /api/products
+
 Returns all 7 products.
 
 ```json
@@ -80,36 +100,35 @@ Returns all 7 products.
 **Response:**
 ```json
 {
-  "totalBeforeDiscount": 290,
+  "totalBeforeDiscount": 290.00,
   "pairDiscounts": [
-    { "productId": "orange", "pairs": 1, "discountAmount": 12 }
+    { "productId": "orange", "pairs": 1, "discountAmount": 12.00 }
   ],
-  "totalPairDiscount": 12,
-  "memberCardDiscount": 27.8,
-  "finalTotal": 250.2
+  "totalPairDiscount": 12.00,
+  "memberCardDiscount": 27.80,
+  "finalTotal": 250.20
 }
 ```
 
-**Error (Red Set restriction):**
+**Error — Red Set restriction (HTTP 429):**
 ```json
 {
-  "statusCode": 429,
-  "message": "Red Set can only be ordered once per hour per customer"
+  "message": "Red Set can only be ordered once per hour",
+  "minutesRemaining": 42
 }
 ```
 
 ## Business Rules
 
 ### Pair Discount (5%)
-- Applies to: **Orange** (120), **Pink** (80), **Green** (40)
-- Same price items can pair together
+- Applies to: **Orange** (120 THB), **Pink** (80 THB), **Green** (40 THB)
 - Every 2 items of the same price = 1 pair = 5% off that pair
 - Odd quantity: last item gets no discount
 
 ```
-Orange x2 → (120+120) × 0.95 = 228
-Pink x4   → (80+80) × 0.95 × 2 = 304
-Green x3  → (40+40) × 0.95 + 40 = 116
+Orange x2 → (120+120) × 0.95 = 228.00
+Pink x4   → (80+80) × 0.95 × 2 = 304.00
+Green x3  → (40+40) × 0.95 + 40 = 116.00
 ```
 
 ### Member Card Discount (10%)
@@ -118,12 +137,13 @@ Green x3  → (40+40) × 0.95 + 40 = 116
 
 ### Red Set Restriction
 - Only **1 customer per IP** can order Red Set within **1 hour**
-- Returns HTTP 429 if another customer tries within the same hour
+- Returns HTTP 429 with `minutesRemaining` if blocked
+- Frontend shows an alert with the time remaining
 
 ## Test Coverage
 
 | Module | Tests |
-|--------|-------|
+|---|---|
 | Backend - ProductsService | 6 |
 | Backend - CalculatorService | 13 |
 | Backend - RedSetService | 7 |
