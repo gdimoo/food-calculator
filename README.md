@@ -9,6 +9,11 @@ A full-stack food store calculator with discount logic, built with NestJS and Ne
 - **Testing:** Jest + React Testing Library
 - **API Docs:** Swagger UI
 
+## Prerequisites
+
+- Node.js v18+
+- npm v9+
+
 ## Project Structure
 
 ```
@@ -33,30 +38,54 @@ food-calculator/
         └── types/                # Shared TypeScript interfaces
 ```
 
-## Getting Started
+## Setup & Running
+
+> Both backend and frontend must be running at the same time.
+
+### 1. Backend
+
+```bash
+cd backend
+npm install
+npm run start:dev
+```
+
+Runs at **http://localhost:3001**
+
+### 2. Frontend
+
+Open a new terminal:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Runs at **http://localhost:3000**
+
+### 3. Open the app
+
+Visit **http://localhost:3000** in your browser.
+
+### Swagger API Docs
+
+Visit **http://localhost:3001/api/docs**
+
+## Running Tests
 
 ### Backend
 
 ```bash
 cd backend
-npm install
-npm run start:dev     # http://localhost:3001
-npm run test          # run unit tests
+npm run test
 ```
 
 ### Frontend
 
 ```bash
 cd frontend
-npm install
-npm run dev           # http://localhost:3000
-npm run test          # run unit tests
-```
-
-### Swagger Docs
-
-```
-http://localhost:3001/api/docs
+npm run test
 ```
 
 ## UI Flow
