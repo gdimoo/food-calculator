@@ -70,7 +70,14 @@ export const useCalculator = () => {
         body: JSON.stringify({ items, memberCardNumber: memberCard }),
       });
 
-      if (!response.ok) throw new Error('Calculation failed');
+      if (!response.ok) {
+        const errBody = await response.json().catch(() => ({}));
+        const msg = errBody.message ?? 'Calculation failed';
+        const minutes = errBody.minutesRemaining;
+        throw new Error(
+          minutes ? `${msg}. Please try again in ${minutes} minute${minutes > 1 ? 's' : ''}.` : msg,
+        );
+      }
 
       const result: CalculationResult = await response.json();
       setState((prev) => ({
